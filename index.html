@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Real Estate Luxury</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --dark: #0f172a; --white: #ffffff; --gray: #f1f5f9; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Noto Sans Arabic', sans-serif; }
+        
+        body { background: var(--gray); margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Fixed Header */
+        header { background: var(--dark); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .logo { font-weight: 900; color: var(--gold); font-size: 20px; letter-spacing: 1px; }
+        .lang-btn { background: var(--gold); border: none; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; color: #000; }
+
+        /* Main Scrollable Area */
+        main { flex: 1; overflow-y: auto; padding-bottom: 20px; scroll-behavior: smooth; }
+
+        .back-area { padding: 10px 20px; display: none; }
+        .btn-back { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 10px; cursor: pointer; }
+
+        .hero { background: var(--dark); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
+        
+        /* City Selection */
+        .city-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
+        .city-card { position: relative; height: 200px; border-radius: 25px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .city-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: 0.4s; }
+        .city-card:active img { transform: scale(1.05); }
+        .city-card .city-name { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; font-weight: 900; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        /* Property Cards */
+        .property-list { display: none; padding: 15px; }
+        .card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
+        .card-img { width: 100%; height: 240px; object-fit: cover; }
+        .card-price { position: absolute; top: 15px; left: 15px; background: #15803d; color: white; padding: 8px 15px; border-radius: 15px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .card-body { padding: 20px; }
+        .card-title { font-size: 20px; font-weight: 900; margin-bottom: 10px; color: var(--dark); }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .card-tags span { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #64748b; }
+
+        .btn-reserve { width: 100%; background: var(--dark); color: var(--gold); border: none; padding: 15px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* Booking Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: white; border-radius: 30px; padding: 25px; width: 100%; max-width: 450px; position: relative; border-top: 8px solid var(--gold); }
+        .modal-content h2 { margin-top: 0; color: var(--dark); font-weight: 900; }
+        
+        .form-group { text-align: right; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #64748b; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 15px; outline: none; }
+        .form-group input:focus { border-color: var(--gold); }
+
+        .calc-box { background: #fffbeb; border: 1px dashed var(--gold); border-radius: 15px; padding: 15px; margin: 15px 0; text-align: center; }
+        .nights-count { font-weight: bold; color: var(--dark); }
+        .final-price { font-size: 20px; font-weight: 900; color: #15803d; margin-top: 5px; }
+
+        .btn-send { background: #25D366; color: white; width: 100%; padding: 15px; border: none; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .btn-close { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); background: white; color: red; border: none; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+
+        /* Footer Fixed */
+        footer { background: white; padding: 12px 20px; display: flex; gap: 10px; border-top: 1px solid #e2e8f0; }
+        .footer-btn { flex: 1; padding: 12px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; color: white; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">VIP AMLAK</div>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">العربية</button>
+</header>
+
+<main>
+    <div id="homePage">
+        <div class="hero">
+            <h1 id="heroTitle">هەلبژاردنا پله‌ ئێك بۆ تە</h1>
+            <p id="heroSub" style="color: #94a3b8;">باشترین و گونجاوترین جهـ ل کوردستانێ</p>
+        </div>
+        <div class="city-grid">
+            <div class="city-card" onclick="openCity('Duhok')">
+                <img src="https://images.unsplash.com/photo-1590644365607-1c5a519a7a37?w=600" alt="Duhok">
+                <span class="city-name" id="nameDuhok">دهۆک 🏙️</span>
+            </div>
+            <div class="city-card" onclick="openCity('Amedi')">
+                <img src="https://i.postimg.cc/kMRJzmFx/IMG-4696.jpg" alt="Amedi">
+                <span class="city-name" id="nameAmedi">ئامێدی 🏰</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="propertyPage" class="property-list">
+        <div class="back-area" id="backArea"><button class="btn-back" onclick="goHome()" id="btnBackText">ڤەگەڕیان</button></div>
+        <div id="propertyContainer"></div>
+    </div>
+</main>
+
+<div class="modal" id="bookModal">
+    <div class="modal-content">
+        <button class="btn-close" onclick="closeModal()">X</button>
+        <h2 id="modalHeader">داخوازی دکەی</h2>
+        
+        <div class="form-group">
+            <label id="lblS">دیرۆکا هاتنێ (من أی تاریخ):</label>
+            <input type="date" id="startDate" onchange="updateCalc()">
+        </div>
+        
+        <div class="form-group">
+            <label id="lblE">دیرۆکا چوونێ (الی تاریخ):</label>
+            <input type="date" id="endDate" onchange="updateCalc()">
+        </div>
+
+        <div class="calc-box">
+            <div class="nights-count" id="nightsDisplay">شەڤ: ٠</div>
+            <div id="discountDisplay" style="font-size: 12px; color: #b45309;">داشکاندن: $٠</div>
+            <div class="final-price" id="totalDisplay">کۆم: $٠</div>
+        </div>
+
+        <div class="form-group">
+            <label id="lblN">تێبینی یان داخوازیێن دی:</label>
+            <textarea id="custNotes" rows="2" placeholder="..."></textarea>
+        </div>
+
+        <button class="btn-send" onclick="sendWhatsApp()" id="btnSend">فرێکرن ب واتسئەپ</button>
+    </div>
+</div>
+
+<footer>
+    <a href="https://wa.me/9647515600281" class="footer-btn" style="background: #25D366;">WhatsApp</a>
+    <a href="https://t.me/sakardustaki" class="footer-btn" style="background: #0088cc;">Telegram</a>
+</footer>
+
+<script>
+    let currentLang = 'ku';
+    let activePrice = 0;
+    let activeTitle = "";
+
+    const data = {
+        ku: {
+            hero: "هەلبژاردنا پله‌ ئێك بۆ تە 💎", sub: "باشترین و گونجاوترین جهـ ل کوردستانێ",
+            duhok: "دهۆک 🏙️", amedi: "ئامێدی 🏰", back: "🔙 ڤەگەڕیان",
+            reserve: "داخوازی بکە 📅", modalH: "داخوازیێ تۆمار بکە",
+            lblS: "دیرۆکا هاتنێ (مەوعەدێ هاتنێ):", lblE: "دیرۆکا چوونێ (هەتا کەنگی):",
+            lblN: "تێبینی یان داخوازیێن دی:", btnS: "فرێکرن ب واتسئەپ", lang: "العربية"
+        },
+        ar: {
+            hero: "اختيار الدرجة الأولى لك 💎", sub: "أفضل الأماكن وأكثرها راحة في كوردستان",
+            duhok: "دهوك 🏙️", amedi: "العمادية 🏰", back: "🔙 العودة",
+            reserve: "حجز الآن 📅", modalH: "سجل حجزك الآن",
+            lblS: "تاريخ الوصول (من تاريخ):", lblE: "تاريخ المغادرة (الى تاريخ):",
+            lblN: "ملاحظات أو طلبات أخرى:", btnS: "إرسال عبر واتساب", lang: "کوردی"
+        }
+    };
+
+    const properties = [
+        { city: 'Amedi', title: 'شوقەیێن پانۆراما - ئامێدی', price: 120, img: 'https://i.postimg.cc/kMRJzmFx/IMG-4696.jpg', tags: ['⚡ کارەبا بەردەوام', '❄️ سپلیت', '🅿️ گەراج'] },
+        { city: 'Duhok', title: 'ڤێلایا شاهانە - دهۆک', price: 200, img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600', tags: ['🏊 مەلەوانگەهـ', '🌳 باخچە', '📶 ئینتەرنێت'] },
+        { city: 'Duhok', title: 'شوقەیێن ناڤەندا باژێری', price: 90, img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600', tags: ['🛒 نێزیک مارکێت', '🛋️ لوکس', '👨‍👩‍👧‍👦 خێزانی'] }
+    ];
+
+    function toggleLang() {
+        currentLang = currentLang === 'ku' ? 'ar' : 'ku';
+        const t = data[currentLang];
+        document.getElementById('langBtn').innerText = t.lang;
+        document.getElementById('heroTitle').innerText = t.hero;
+        document.getElementById('heroSub').innerText = t.sub;
+        document.getElementById('nameDuhok').innerText = t.duhok;
+        document.getElementById('nameAmedi').innerText = t.amedi;
+        document.getElementById('btnBackText').innerText = t.back;
+        document.getElementById('modalHeader').innerText = t.modalH;
+        document.getElementById('lblS').innerText = t.lblS;
+        document.getElementById('lblE').innerText = t.lblE;
+        document.getElementById('lblN').innerText = t.lblN;
+        document.getElementById('btnSend').innerText = t.btnS;
+        if(activeTitle) { // Refresh listing if inside city
+            const city = properties.find(p => p.title === activeTitle).city;
+            openCity(city);
+        }
+    }
+
+    function openCity(city) {
+        document.getElementById('homePage').style.display = 'none';
+        document.getElementById('propertyPage').style.display = 'block';
+        document.getElementById('backArea').style.display = 'block';
+        
+        const container = document.getElementById('propertyContainer');
+        container.innerHTML = '';
+        properties.filter(p => p.city === city).forEach(p => {
+            container.innerHTML += `
+                <div class="card">
+                    <div class="card-price">$${p.price}</div>
+                    <img src="${p.img}" class="card-img">
+                    <div class="card-body">
+                        <div class="card-title">${p.title}</div>
+                        <div class="card-tags">${p.tags.map(t => `<span>${t}</span>`).join('')}</div>
+                        <button class="btn-reserve" onclick="openModal('${p.title}', ${p.price})">${data[currentLang].reserve}</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function goHome() {
+        document.getElementById('homePage').style.display = 'block';
+        document.getElementById('propertyPage').style.display = 'none';
+        document.getElementById('backArea').style.display = 'none';
+        activeTitle = "";
+    }
+
+    function openModal(title, price) {
+        activeTitle = title;
+        activePrice = price;
+        document.getElementById('bookModal').style.display = 'flex';
+        updateCalc();
+    }
+
+    function closeModal() { document.getElementById('bookModal').style.display = 'none'; }
+
+    function updateCalc() {
+        const start = new Date(document.getElementById('startDate').value);
+        const end = new Date(document.getElementById('endDate').value);
+        const nightDisp = document.getElementById('nightsDisplay');
+        const discDisp = document.getElementById('discountDisplay');
+        const totalDisp = document.getElementById('totalDisplay');
+
+        if (start && end && end > start) {
+            const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            let discount = 0;
+            if (nights === 2) discount = 10;
+            else if (nights >= 3) discount = 20;
+
+            const total = (nights * activePrice) - discount;
+            
+            nightDisp.innerText = currentLang === 'ku' ? `شەڤ: ${nights}` : `الليالي: ${nights}`;
+            discDisp.innerText = currentLang === 'ku' ? `داشکاندن: $${discount}` : `الخصم: $${discount}`;
+            totalDisp.innerText = currentLang === 'ku' ? `کۆم: $${total}` : `المجموع: $${total}`;
+        } else {
+            nightDisp.innerText = "-";
+            discDisp.innerText = "-";
+            totalDisp.innerText = "-";
+        }
+    }
+
+    function sendWhatsApp() {
+        const s = document.getElementById('startDate').value;
+        const e = document.getElementById('endDate').value;
+        const n = document.getElementById('custNotes').value;
+        const calc = document.getElementById('totalDisplay').innerText;
+        const nights = document.getElementById('nightsDisplay').innerText;
+
+        if(!s || !e) return alert("تکایە دیرۆکێ هەلبژێرە!");
+
+        const message = `*داخوازیا نوی (VIP)*\n🏠 جهـ: ${activeTitle}\n📅 هاتن: ${s}\n📅 چوون: ${e}\n🌙 ${nights}\n📝 تێبینی: ${n}\n💰 ${calc}`;
+        window.location.href = `https://wa.me/9647515600281?text=${encodeURIComponent(message)}`;
+    }
+</script>
+</body>
+</html>
