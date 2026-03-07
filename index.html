@@ -3,256 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP Real Estate Luxury</title>
+    <title>Xanî 🏡 - Professional Real Estate Ecosystem</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #d4af37; --dark: #0f172a; --white: #ffffff; --gray: #f1f5f9; }
+        :root { --gold: #d4af37; --dark: #0f172a; --white: #ffffff; --gray: #f1f5f9; --green: #22c55e; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Noto Sans Arabic', sans-serif; }
         
-        body { background: var(--gray); margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--gray); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Fixed Header */
-        header { background: var(--dark); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo { font-weight: 900; color: var(--gold); font-size: 20px; letter-spacing: 1px; }
-        .lang-btn { background: var(--gold); border: none; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; color: #000; }
+        /* FIXED HEADER */
+        header { 
+            background: var(--dark); color: white; padding: 0 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            height: 70px; z-index: 5000; position: fixed; top: 0; width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .logo { font-weight: 900; color: var(--gold); font-size: 1.6rem; }
+        .lang-select { background: var(--gold); border: none; padding: 6px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        /* Main Scrollable Area */
-        main { flex: 1; overflow-y: auto; padding-bottom: 20px; scroll-behavior: smooth; }
+        /* SCROLLABLE MAIN */
+        main { flex: 1; overflow-y: auto; padding: 90px 15px 100px 15px; scroll-behavior: smooth; }
 
-        .back-area { padding: 10px 20px; display: none; }
-        .btn-back { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 15px; border-radius: 10px; cursor: pointer; }
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hero { background: var(--dark); color: white; padding: 40px 20px; text-align: center; border-bottom: 5px solid var(--gold); }
-        
-        /* City Selection */
-        .city-grid { display: grid; grid-template-columns: 1fr; gap: 20px; padding: 20px; }
-        .city-card { position: relative; height: 200px; border-radius: 25px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .city-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: 0.4s; }
-        .city-card:active img { transform: scale(1.05); }
-        .city-card .city-name { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 32px; font-weight: 900; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        /* NAVIGATION CARDS */
+        .nav-card { background: var(--dark); border-radius: 25px; padding: 35px 20px; color: white; text-align: center; margin-bottom: 20px; cursor: pointer; border-bottom: 6px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .nav-card h2 { margin: 0; color: var(--gold); font-size: 1.6rem; }
 
-        /* Property Cards */
-        .property-list { display: none; padding: 15px; }
-        .card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; }
-        .card-img { width: 100%; height: 240px; object-fit: cover; }
-        .card-price { position: absolute; top: 15px; left: 15px; background: #15803d; color: white; padding: 8px 15px; border-radius: 15px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .card-body { padding: 20px; }
-        .card-title { font-size: 20px; font-weight: 900; margin-bottom: 10px; color: var(--dark); }
-        .card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-        .card-tags span { background: #f8fafc; border: 1px solid #e2e8f0; padding: 5px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #64748b; }
+        /* LISTING CARDS */
+        .card { background: white; border-radius: 30px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        .img-slider { width: 100%; height: 260px; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; position: relative; }
+        .img-slider img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; }
+        .img-badge { position: absolute; top: 15px; right: 15px; background: var(--gold); color: var(--dark); padding: 4px 12px; border-radius: 10px; font-size: 11px; font-weight: 900; }
 
-        .btn-reserve { width: 100%; background: var(--dark); color: var(--gold); border: none; padding: 15px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card-body { padding: 25px; }
+        .location-tag { color: #64748b; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+        .price-text { color: var(--green); font-weight: 900; font-size: 1.7rem; display: block; margin-bottom: 12px; }
+        .card-title { font-weight: 900; font-size: 1.4rem; color: var(--dark); margin-bottom: 12px; }
+        .full-desc { font-size: 14px; color: #475569; line-height: 1.8; margin-bottom: 20px; border-top: 1px solid #f1f5f9; padding-top: 15px; }
 
-        /* Booking Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: white; border-radius: 30px; padding: 25px; width: 100%; max-width: 450px; position: relative; border-top: 8px solid var(--gold); }
-        .modal-content h2 { margin-top: 0; color: var(--dark); font-weight: 900; }
-        
-        .form-group { text-align: right; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #64748b; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 12px; font-size: 15px; outline: none; }
-        .form-group input:focus { border-color: var(--gold); }
+        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .spec-item { background: #f8fafc; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; border: 1px solid #e2e8f0; }
 
-        .calc-box { background: #fffbeb; border: 1px dashed var(--gold); border-radius: 15px; padding: 15px; margin: 15px 0; text-align: center; }
-        .nights-count { font-weight: bold; color: var(--dark); }
-        .final-price { font-size: 20px; font-weight: 900; color: #15803d; margin-top: 5px; }
+        /* BUTTONS */
+        .btn-action { width: 100%; background: var(--dark); color: var(--gold); border: none; padding: 18px; border-radius: 20px; font-weight: 900; font-size: 17px; cursor: pointer; }
 
-        .btn-send { background: #25D366; color: white; width: 100%; padding: 15px; border: none; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .btn-close { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); background: white; color: red; border: none; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        /* FORMS */
+        .form-box { background: white; padding: 25px; border-radius: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 900; font-size: 14px; margin-bottom: 8px; color: #334155; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 15px; border: 2px solid #f1f5f9; border-radius: 15px; font-size: 15px; outline: none; }
 
-        /* Footer Fixed */
-        footer { background: white; padding: 12px 20px; display: flex; gap: 10px; border-top: 1px solid #e2e8f0; }
-        .footer-btn { flex: 1; padding: 12px; border-radius: 15px; text-align: center; text-decoration: none; font-weight: bold; color: white; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* MODAL */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9000; justify-content:center; align-items:center; padding:20px; }
+        .modal-content { background:white; border-radius:30px; padding:30px; width:100%; max-width:450px; position:relative; }
+        .calc-area { background:#fffbeb; padding:20px; border-radius:20px; text-align:center; margin:15px 0; border:2px dashed var(--gold); }
+
+        /* FOOTER */
+        footer { background: white; border-top: 1px solid #eee; padding: 15px; text-align: center; position: fixed; bottom: 0; width: 100%; height: 80px; z-index: 5000; }
+        .footer-text { font-size: 11px; color: #94a3b8; font-weight: bold; font-family: sans-serif; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">VIP AMLAK</div>
-    <button class="lang-btn" onclick="toggleLang()" id="langBtn">العربية</button>
+    <div class="logo">Xanî 🏡</div>
+    <select class="lang-select" id="langSelect" onchange="changeLang()">
+        <option value="ku">کوردی</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+    </select>
 </header>
 
-<main>
-    <div id="homePage">
-        <div class="hero">
-            <h1 id="heroTitle">هەلبژاردنا پله‌ ئێك بۆ تە</h1>
-            <p id="heroSub" style="color: #94a3b8;">باشترین و گونجاوترین جهـ ل کوردستانێ</p>
+<main id="mainScroll">
+    <div id="homePage" class="page active">
+        <h2 id="t_welcome" style="text-align:center; font-weight:900; margin-bottom:30px;">بورسا Xanî 🏡 یا پڕۆفیشناڵ</h2>
+        <div class="nav-card" onclick="showPage('farmCities')">
+            <h2 id="t_nav1">🏡 مەزرەعە و حجز</h2>
+            <p id="t_nav1_s">دهۆک، ئامێدی، ئاکرێ</p>
         </div>
-        <div class="city-grid">
-            <div class="city-card" onclick="openCity('Duhok')">
-                <img src="https://images.unsplash.com/photo-1590644365607-1c5a519a7a37?w=600" alt="Duhok">
-                <span class="city-name" id="nameDuhok">دهۆک 🏙️</span>
-            </div>
-            <div class="city-card" onclick="openCity('Amedi')">
-                <img src="https://i.postimg.cc/kMRJzmFx/IMG-4696.jpg" alt="Amedi">
-                <span class="city-name" id="nameAmedi">ئامێدی 🏰</span>
-            </div>
+        <div class="nav-card" onclick="showPage('sellPage')">
+            <h2 id="t_nav2">🏗️ فرۆتنا عەرد و خانی</h2>
+            <p id="t_nav2_s">بۆ مە بنێرە دا بۆ تە بفرۆشین</p>
+        </div>
+        <div class="nav-card" onclick="showPage('buyPage')">
+            <h2 id="t_nav3">🏠 دەرفەتێن کڕینێ</h2>
+            <p id="t_nav3_s">خانی و عەردێن نایاب بۆ فرۆتنێ</p>
         </div>
     </div>
 
-    <div id="propertyPage" class="property-list">
-        <div class="back-area" id="backArea"><button class="btn-back" onclick="goHome()" id="btnBackText">ڤەگەڕیان</button></div>
-        <div id="propertyContainer"></div>
+    <div id="farmCities" class="page">
+        <button id="b_back_cities" class="btn-action" style="background:#eee; color:black; margin-bottom:20px;" onclick="showPage('homePage')">⬅️ پاشڤە</button>
+        <h3 id="t_choose">باژێڕێ مەزرەعەیێ هەلبژێرە:</h3>
+        <div id="city_duhok_btn" onclick="openCity('Duhok')" style="background:white; padding:30px; border-radius:20px; margin-bottom:15px; text-align:center; font-weight:900; font-size:1.3rem; border:1px solid #ddd; cursor:pointer;">دهۆک - Duhok 🏙️</div>
+        <div id="city_amedi_btn" onclick="openCity('Amedi')" style="background:white; padding:30px; border-radius:20px; margin-bottom:15px; text-align:center; font-weight:900; font-size:1.3rem; border:1px solid #ddd; cursor:pointer;">ئامێدی - Amedi 🏰</div>
+        <div id="city_akre_btn" onclick="openCity('Akre')" style="background:white; padding:30px; border-radius:20px; margin-bottom:15px; text-align:center; font-weight:900; font-size:1.3rem; border:1px solid #ddd; cursor:pointer;">ئاکرێ - Akre ⛰️</div>
+    </div>
+
+    <div id="listingsPage" class="page">
+        <button id="b_back_listings" class="btn-action" style="background:#eee; color:black; margin-bottom:20px;" onclick="showPage('farmCities')">⬅️ پاشڤە</button>
+        <div id="listingsContainer"></div>
+    </div>
+
+    <div id="sellPage" class="page">
+        <button id="b_back_sell" class="btn-action" style="background:#eee; color:black; margin-bottom:20px;" onclick="showPage('homePage')">⬅️ پاشڤە</button>
+        <div class="form-box">
+            <h2 id="t_sell_form">زانیاریێن مولکێ خۆ داخل بکە</h2>
+            <div class="form-group"><label id="l_type">جۆرێ مولکێ تە؟ (النوع):</label><select id="f_type">
+                <option id="opt_house" value="House">خانی (بيت)</option>
+                <option id="opt_land" value="Land">عەرد (أرض)</option>
+                <option id="opt_app" value="Appartment">شوقە (شقة)</option>
+                <option id="opt_farm" value="Farm">مەزرەعە (مزرعة)</option>
+            </select></div>
+            <div class="form-group"><label id="l_loc">ناڤونیشان (باژێڕ و گەڕەک):</label><input type="text" id="f_loc"></div>
+            <div class="form-group"><label id="l_size">رووبەر (مساحة m2):</label><input type="text" id="f_size" placeholder="200m"></div>
+            <div class="form-group"><label id="l_sind">جۆرێ سندێ (تاپۆ یان زراعی):</label><input type="text" id="f_sind"></div>
+            <div class="form-group"><label id="l_feat">نێزیکی جادەیێ و خزمەتگوزاری؟:</label><textarea id="f_feat" rows="2"></textarea></div>
+            <div class="form-group"><label id="l_price">نرخێ داخوازی ب دۆلار:</label><input type="text" id="f_price"></div>
+            <div class="form-group" style="border:1px dashed red; padding:10px; border-radius:15px; background:#fff5f5;">
+                <label style="color:red;" id="l_img">📸 بارکرنا وێنەیان:</label>
+                <p style="font-size:11px; margin:0;" id="l_img_s">پشتی فرێکرنێ، تکایە وێنەیان د واتسئەپێ دا بنێرە.</p>
+            </div>
+            <button id="b_send_sell" class="btn-action" style="background:var(--green); color:white;" onclick="sendSellWA()">فرێکرن بۆ نڤیسینگێ 🚀</button>
+        </div>
+    </div>
+
+    <div id="buyPage" class="page">
+        <button id="b_back_buy" class="btn-action" style="background:#eee; color:black; margin-bottom:20px;" onclick="showPage('homePage')">⬅️ پاشڤە</button>
+        <div id="buyContainer"></div>
     </div>
 </main>
 
 <div class="modal" id="bookModal">
     <div class="modal-content">
-        <button class="btn-close" onclick="closeModal()">X</button>
-        <h2 id="modalHeader">داخوازی دکەی</h2>
-        
-        <div class="form-group">
-            <label id="lblS">دیرۆکا هاتنێ (من أی تاریخ):</label>
-            <input type="date" id="startDate" onchange="updateCalc()">
+        <button onclick="closeModal()" style="position:absolute; top:20px; left:20px; border:none; background:#eee; border-radius:50%; width:35px; height:35px; font-weight:bold;">X</button>
+        <h3 id="modalTitle" style="text-align:center; font-weight:900;">داخوازییا حجزێ</h3>
+        <div class="form-group"><label id="l_from">ژ مێژووا (From):</label><input type="date" id="m_start" onchange="calc()"></div>
+        <div class="form-group"><label id="l_to">هەتا مێژووا (To):</label><input type="date" id="m_end" onchange="calc()"></div>
+        <div class="calc-area">
+            <div id="res_days" style="font-weight:900;">ماوێ مانێ: ٠ ڕۆژ</div>
+            <div id="res_total" style="color:var(--green); font-weight:900; font-size:1.6rem; margin-top:5px;">کۆم: $٠</div>
         </div>
-        
-        <div class="form-group">
-            <label id="lblE">دیرۆکا چوونێ (الی تاریخ):</label>
-            <input type="date" id="endDate" onchange="updateCalc()">
-        </div>
-
-        <div class="calc-box">
-            <div class="nights-count" id="nightsDisplay">شەڤ: ٠</div>
-            <div id="discountDisplay" style="font-size: 12px; color: #b45309;">داشکاندن: $٠</div>
-            <div class="final-price" id="totalDisplay">کۆم: $٠</div>
-        </div>
-
-        <div class="form-group">
-            <label id="lblN">تێبینی یان داخوازیێن دی:</label>
-            <textarea id="custNotes" rows="2" placeholder="..."></textarea>
-        </div>
-
-        <button class="btn-send" onclick="sendWhatsApp()" id="btnSend">فرێکرن ب واتسئەپ</button>
+        <div class="form-group"><label id="l_note">تێبینیێن دی:</label><textarea id="m_note" rows="2"></textarea></div>
+        <button id="b_confirm_book" class="btn-action" style="background:#25D366; color:white;" onclick="sendFarmWA()">پشتڕاستکرن و فرێکرن ✅</button>
     </div>
 </div>
 
 <footer>
-    <a href="https://wa.me/9647515600281" class="footer-btn" style="background: #25D366;">WhatsApp</a>
-    <a href="https://t.me/sakardustaki" class="footer-btn" style="background: #0088cc;">Telegram</a>
+    <div class="footer-text">CREATED BY SAKARDUSTAKI<br>PHONE: 07515600281</div>
 </footer>
 
 <script>
-    let currentLang = 'ku';
-    let activePrice = 0;
-    let activeTitle = "";
+    let activePrice = 0, activeName = "", currentLang = 'ku', currentCityOpen = "";
 
-    const data = {
-        ku: {
-            hero: "هەلبژاردنا پله‌ ئێك بۆ تە 💎", sub: "باشترین و گونجاوترین جهـ ل کوردستانێ",
-            duhok: "دهۆک 🏙️", amedi: "ئامێدی 🏰", back: "🔙 ڤەگەڕیان",
-            reserve: "داخوازی بکە 📅", modalH: "داخوازیێ تۆمار بکە",
-            lblS: "دیرۆکا هاتنێ (مەوعەدێ هاتنێ):", lblE: "دیرۆکا چوونێ (هەتا کەنگی):",
-            lblN: "تێبینی یان داخوازیێن دی:", btnS: "فرێکرن ب واتسئەپ", lang: "العربية"
+    const translations = {
+        ku: { 
+            welcome: "بورسا Xanî 🏡 یا پڕۆفیشناڵ", n1: "🏡 مەزرەعە و حجز", n1s: "دهۆک، ئامێدی، ئاکرێ", n2: "🏗️ فرۆتنا عەرد و خانی", n2s: "بۆ مە بنێرە دا بۆ تە بفرۆشین", n3: "🏠 دەرفەتێن کڕینێ", n3s: "خانی و عەردێن نایاب بۆ فرۆتنێ", choose: "باژێڕێ مەزرەعەیێ هەلبژێرە:", sell_f: "زانیاریێن مولکێ خۆ داخل بکە", days: "ماوێ مانێ: ", total: "کۆم: $", unit: " ڕۆژ", reserve: "حجز بکە 📅", back: "⬅️ پاشڤە", l_type: "جۆرێ مولکێ تە؟ (النوع):", l_loc: "ناڤونیشان (باژێڕ و گەڕەک):", l_size: "رووبەر (مساحة m2):", l_sind: "جۆرێ سندێ (تاپۆ یان زراعی):", l_feat: "نێزیکی جادەیێ و خزمەتگوزاری؟:", l_price: "نرخێ داخوازی ب دۆلار:", l_img: "📸 بارکرنا وێنەیان:", l_img_s: "پشتی فرێکرنێ، تکایە وێنەیان د واتسئەپێ دا بنێرە.", send: "فرێکرن بۆ نڤیسینگێ 🚀", l_from: "ژ مێژووا (From):", l_to: "هەتا مێژووا (To):", l_note: "تێبینیێن دی:", confirm: "پشتڕاستکرن و فرێکرن ✅", night: "شەڤ", buy_btn: "📞 پەیوەندی و کڕین", opt_h: "خانی (بيت)", opt_l: "عەرد (أرض)", opt_a: "شوقە (شقة)", opt_f: "مەزرەعە (مزرعة)", modal_t: "داخوازییا حجزێ", dir: "rtl" 
         },
-        ar: {
-            hero: "اختيار الدرجة الأولى لك 💎", sub: "أفضل الأماكن وأكثرها راحة في كوردستان",
-            duhok: "دهوك 🏙️", amedi: "العمادية 🏰", back: "🔙 العودة",
-            reserve: "حجز الآن 📅", modalH: "سجل حجزك الآن",
-            lblS: "تاريخ الوصول (من تاريخ):", lblE: "تاريخ المغادرة (الى تاريخ):",
-            lblN: "ملاحظات أو طلبات أخرى:", btnS: "إرسال عبر واتساب", lang: "کوردی"
+        en: { 
+            welcome: "Xanî 🏡 Professional Real Estate", n1: "🏡 Farms & Booking", n1s: "Duhok, Amedi, Akre", n2: "🏗️ Sell Your Property", n2s: "Send us your property details", n3: "🏠 Buy Properties", n3s: "Best homes and lands for sale", choose: "Select Farm Location:", sell_f: "Enter Property Details", days: "Stay: ", total: "Total: $", unit: " Day(s)", reserve: "Book Now 📅", back: "⬅️ Back", l_type: "Property Type:", l_loc: "Address (City/Street):", l_size: "Size (m2):", l_sind: "Document Type:", l_feat: "Nearby Services:", l_price: "Asking Price ($):", l_img: "📸 Upload Photos:", l_img_s: "After sending, please send photos via WhatsApp.", send: "Send to Office 🚀", l_from: "Check-in (From):", l_to: "Check-out (To):", l_note: "Additional Notes:", confirm: "Confirm and Send ✅", night: "Night", buy_btn: "📞 Contact & Buy", opt_h: "House", opt_l: "Land", opt_a: "Apartment", opt_f: "Farm", modal_t: "Booking Request", dir: "ltr" 
+        },
+        ar: { 
+            welcome: "بورصة Xanî 🏡 العقارية", n1: "🏡 مزارع وحجوزات", n1s: "دهوك، العمادية، عقرة", n2: "🏗️ بيع العقارات", n2s: "أرسل معلومات عقارك لبيعه", n3: "🏠 فرص الشراء", n3s: "أفضل المنازل والأراضي للبيع", choose: "اختر موقع المزرعة:", sell_f: "أدخل معلومات العقار", days: "المدة: ", total: "المجموع: $", unit: " يوم", reserve: "احجز الآن 📅", back: "⬅️ رجوع", l_type: "نوع العقار:", l_loc: "العنوان (المدينة والحي):", l_size: "المساحة (m2):", l_sind: "نوع السند:", l_feat: "القرب من الخدمات:", l_price: "السعر المطلوب ($):", l_img: "📸 تحميل الصور:", l_img_s: "بعد الإرسال، يرجى إرسال الصور عبر الواتساب.", send: "إرسال للمكتب 🚀", l_from: "من تاريخ:", l_to: "إلى تاريخ:", l_note: "ملاحظات إضافية:", confirm: "تأكيد وإرسال ✅", night: "ليلة", buy_btn: "📞 اتصل واشترِ", opt_h: "بيت", opt_l: "أرض", opt_a: "شقة", opt_f: "مزرعة", modal_t: "طلب حجز", dir: "rtl" 
         }
     };
 
-    const properties = [
-        { city: 'Amedi', title: 'شوقەیێن پانۆراما - ئامێدی', price: 120, img: 'https://i.postimg.cc/kMRJzmFx/IMG-4696.jpg', tags: ['⚡ کارەبا بەردەوام', '❄️ سپلیت', '🅿️ گەراج'] },
-        { city: 'Duhok', title: 'ڤێلایا شاهانە - دهۆک', price: 200, img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600', tags: ['🏊 مەلەوانگەهـ', '🌳 باخچە', '📶 ئینتەرنێت'] },
-        { city: 'Duhok', title: 'شوقەیێن ناڤەندا باژێری', price: 90, img: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600', tags: ['🛒 نێزیک مارکێت', '🛋️ لوکس', '👨‍👩‍👧‍👦 خێزانی'] }
-    ];
+    const data = {
+        farms: [
+            { city: 'Duhok', title_ku: 'مەزرەعەیا سۆلاڤ یا شاهانە VIP', title_en: 'Sulav Royal Farm VIP', title_ar: 'مزرعة سولاف الملكية VIP', price: 250, loc_ku: 'دهۆک - سۆلاڤ', loc_en: 'Duhok - Sulav', loc_ar: 'دهوك - سولاف', desc_ku: 'دیمەنەکێ چیا یێ سەرسۆرکەر هەیە. گونجایە بۆ خێزانێن مەزن.', desc_en: 'Stunning mountain view. Suitable for large families.', desc_ar: 'إطلالة جبلية رائعة. مناسبة للعائلات الكبيرة.', imgs: ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800'], tags_ku: ['🏊 مەلەوانگەهـ', '💡 کارەبا ٢٤ک'], tags_en: ['🏊 Pool', '💡 24h Electricity'], tags_ar: ['🏊 مسبح', '💡 كهرباء ٢٤س'] },
+            { city: 'Amedi', title_ku: 'کۆخێ ئامێدیێ یێ کلاسیک', title_en: 'Classic Amedi Cabin', title_ar: 'كوخ العمادية الكلاسيكي', price: 150, loc_ku: 'ئامێدی - قەدش', loc_en: 'Amedi - Qadash', loc_ar: 'العمادية - قدش', desc_ku: 'ئارامی و سروشتێ ئامێدیێ.', desc_en: 'Peace and nature of Amedi.', desc_ar: 'هدوء وطبيعة العمادية.', imgs: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'], tags_ku: ['⛰️ دیمەنێ چیا', '🔥 باربیکیو'], tags_en: ['⛰️ Mountain View', '🔥 BBQ'], tags_ar: ['⛰️ إطلالة جبلية', '🔥 باربيكيو'] },
+            { city: 'Akre', title_ku: 'ڤێلایا ئاکرێ یا مۆدێرن', title_en: 'Modern Akre Villa', title_ar: 'فيللا عقرة المودرن', price: 130, loc_ku: 'ئاکرێ - بجیل', loc_en: 'Akre - Bijil', loc_ar: 'عقرة - بجيل', desc_ku: 'ڤێلایەکا نوی ب هەمی پێدڤیێن ژیانێ ڤە.', desc_en: 'New villa with all life requirements.', desc_ar: 'فيللا جديدة مع كافة مستلزمات الحياة.', imgs: ['https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=800'], tags_ku: ['⛲ نافوورە', '🅿️ گەراج'], tags_en: ['⛲ Fountain', '🅿️ Garage'], tags_ar: ['⛲ نافورة', '🅿️ كراج'] }
+        ],
+        houses: [
+            { title_ku: 'خانیێ مۆدێرن - تاپۆ سەرف', title_en: 'Modern House - Freehold Tapu', title_ar: 'بيت مودرن - طابو صرف', price: '125,000', loc_ku: 'دهۆک - ماسیک', loc_en: 'Duhok - Masike', loc_ar: 'دهوك - ماسيك', desc_ku: 'خانیەکێ ٢ نهۆمی یێ نوی.', desc_en: 'New 2-story house.', desc_ar: 'بيت جديد من طابقين.', imgs: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'], tags_ku: ['📏 200m رووبەر', '📜 تاپۆ'], tags_en: ['📏 200m Area', '📜 Tapu'], tags_ar: ['📏 مساحة ٢٠٠م', '📜 طابو'] }
+        ]
+    };
 
-    function toggleLang() {
-        currentLang = currentLang === 'ku' ? 'ar' : 'ku';
-        const t = data[currentLang];
-        document.getElementById('langBtn').innerText = t.lang;
-        document.getElementById('heroTitle').innerText = t.hero;
-        document.getElementById('heroSub').innerText = t.sub;
-        document.getElementById('nameDuhok').innerText = t.duhok;
-        document.getElementById('nameAmedi').innerText = t.amedi;
-        document.getElementById('btnBackText').innerText = t.back;
-        document.getElementById('modalHeader').innerText = t.modalH;
-        document.getElementById('lblS').innerText = t.lblS;
-        document.getElementById('lblE').innerText = t.lblE;
-        document.getElementById('lblN').innerText = t.lblN;
-        document.getElementById('btnSend').innerText = t.btnS;
-        if(activeTitle) { // Refresh listing if inside city
-            const city = properties.find(p => p.title === activeTitle).city;
-            openCity(city);
-        }
+    function changeLang() {
+        currentLang = document.getElementById('langSelect').value; 
+        const d = translations[currentLang]; 
+        document.body.dir = d.dir;
+        
+        document.getElementById('t_welcome').innerText = d.welcome;
+        document.getElementById('t_nav1').innerText = d.n1; document.getElementById('t_nav1_s').innerText = d.n1s;
+        document.getElementById('t_nav2').innerText = d.n2; document.getElementById('t_nav2_s').innerText = d.n2s;
+        document.getElementById('t_nav3').innerText = d.n3; document.getElementById('t_nav3_s').innerText = d.n3s;
+        document.getElementById('t_choose').innerText = d.choose;
+        
+        document.getElementById('b_back_cities').innerText = d.back;
+        document.getElementById('b_back_listings').innerText = d.back;
+        document.getElementById('b_back_sell').innerText = d.back;
+        document.getElementById('b_back_buy').innerText = d.back;
+
+        document.getElementById('t_sell_form').innerText = d.sell_f;
+        document.getElementById('l_type').innerText = d.l_type;
+        document.getElementById('l_loc').innerText = d.l_loc;
+        document.getElementById('l_size').innerText = d.l_size;
+        document.getElementById('l_sind').innerText = d.l_sind;
+        document.getElementById('l_feat').innerText = d.l_feat;
+        document.getElementById('l_price').innerText = d.l_price;
+        document.getElementById('l_img').innerText = d.l_img;
+        document.getElementById('l_img_s').innerText = d.l_img_s;
+        document.getElementById('b_send_sell').innerText = d.send;
+
+        document.getElementById('opt_house').innerText = d.opt_h;
+        document.getElementById('opt_land').innerText = d.opt_l;
+        document.getElementById('opt_app').innerText = d.opt_a;
+        document.getElementById('opt_farm').innerText = d.opt_f;
+
+        document.getElementById('modalTitle').innerText = d.modal_t;
+        document.getElementById('l_from').innerText = d.l_from;
+        document.getElementById('l_to').innerText = d.l_to;
+        document.getElementById('l_note').innerText = d.l_note;
+        document.getElementById('b_confirm_book').innerText = d.confirm;
+
+        if(currentCityOpen) openCity(currentCityOpen);
+        if(document.getElementById('buyPage').classList.contains('active')) renderHouses();
+        calc();
+    }
+
+    function showPage(id) { 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        document.getElementById('mainScroll').scrollTop = 0; 
+        if(id === 'buyPage') renderHouses();
+        if(id !== 'listingsPage') currentCityOpen = "";
     }
 
     function openCity(city) {
-        document.getElementById('homePage').style.display = 'none';
-        document.getElementById('propertyPage').style.display = 'block';
-        document.getElementById('backArea').style.display = 'block';
-        
-        const container = document.getElementById('propertyContainer');
-        container.innerHTML = '';
-        properties.filter(p => p.city === city).forEach(p => {
-            container.innerHTML += `
-                <div class="card">
-                    <div class="card-price">$${p.price}</div>
-                    <img src="${p.img}" class="card-img">
-                    <div class="card-body">
-                        <div class="card-title">${p.title}</div>
-                        <div class="card-tags">${p.tags.map(t => `<span>${t}</span>`).join('')}</div>
-                        <button class="btn-reserve" onclick="openModal('${p.title}', ${p.price})">${data[currentLang].reserve}</button>
-                    </div>
-                </div>`;
+        currentCityOpen = city;
+        showPage('listingsPage'); const container = document.getElementById('listingsContainer'); container.innerHTML = '';
+        data.farms.filter(f => f.city === city).forEach(f => {
+            const title = currentLang === 'en' ? f.title_en : (currentLang === 'ar' ? f.title_ar : f.title_ku);
+            const loc = currentLang === 'en' ? f.loc_en : (currentLang === 'ar' ? f.loc_ar : f.loc_ku);
+            const desc = currentLang === 'en' ? f.desc_en : (currentLang === 'ar' ? f.desc_ar : f.desc_ku);
+            const tags = currentLang === 'en' ? f.tags_en : (currentLang === 'ar' ? f.tags_ar : f.tags_ku);
+
+            container.innerHTML += `<div class="card"><div class="img-slider">${f.imgs.map(i=>`<img src="${i}">`).join('')}<div class="img-badge">LUXURY</div></div><div class="card-body"><span class="location-tag">📍 ${loc}</span><span class="price-text">$${f.price} / ${translations[currentLang].night}</span><h2 class="card-title">${title}</h2><p class="full-desc">${desc}</p><div class="specs-grid">${tags.map(t=>`<div class="spec-item">${t}</div>`).join('')}</div><button class="btn-action" onclick="openBook('${title}', ${f.price})">${translations[currentLang].reserve}</button></div></div>`;
         });
     }
 
-    function goHome() {
-        document.getElementById('homePage').style.display = 'block';
-        document.getElementById('propertyPage').style.display = 'none';
-        document.getElementById('backArea').style.display = 'none';
-        activeTitle = "";
+    function renderHouses() {
+        const c = document.getElementById('buyContainer'); c.innerHTML = '';
+        data.houses.forEach(h => {
+            const title = currentLang === 'en' ? h.title_en : (currentLang === 'ar' ? h.title_ar : h.title_ku);
+            const loc = currentLang === 'en' ? h.loc_en : (currentLang === 'ar' ? h.loc_ar : h.loc_ku);
+            const desc = currentLang === 'en' ? h.desc_en : (currentLang === 'ar' ? h.desc_ar : h.desc_ku);
+            const tags = currentLang === 'en' ? h.tags_en : (currentLang === 'ar' ? h.tags_ar : h.tags_ku);
+
+            c.innerHTML += `<div class="card"><div class="img-slider"><img src="${h.imgs[0]}"><div class="img-badge">FOR SALE</div></div><div class="card-body"><span class="location-tag">📍 ${loc}</span><span class="price-text">$${h.price}</span><h2 class="card-title">${title}</h2><p class="full-desc">${desc}</p><div class="specs-grid">${tags.map(t=>`<div class="spec-item">${t}</div>`).join('')}</div><button class="btn-action" style="background:var(--green); color:white;" onclick="contactWA('${title}')">${translations[currentLang].buy_btn}</button></div></div>`;
+        });
     }
 
-    function openModal(title, price) {
-        activeTitle = title;
-        activePrice = price;
-        document.getElementById('bookModal').style.display = 'flex';
-        updateCalc();
-    }
-
+    function openBook(n, p) { activeName = n; activePrice = p; document.getElementById('modalTitle').innerText = n; document.getElementById('bookModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('bookModal').style.display = 'none'; }
 
-    function updateCalc() {
-        const start = new Date(document.getElementById('startDate').value);
-        const end = new Date(document.getElementById('endDate').value);
-        const nightDisp = document.getElementById('nightsDisplay');
-        const discDisp = document.getElementById('discountDisplay');
-        const totalDisp = document.getElementById('totalDisplay');
-
-        if (start && end && end > start) {
-            const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            let discount = 0;
-            if (nights === 2) discount = 10;
-            else if (nights >= 3) discount = 20;
-
-            const total = (nights * activePrice) - discount;
-            
-            nightDisp.innerText = currentLang === 'ku' ? `شەڤ: ${nights}` : `الليالي: ${nights}`;
-            discDisp.innerText = currentLang === 'ku' ? `داشکاندن: $${discount}` : `الخصم: $${discount}`;
-            totalDisp.innerText = currentLang === 'ku' ? `کۆم: $${total}` : `المجموع: $${total}`;
-        } else {
-            nightDisp.innerText = "-";
-            discDisp.innerText = "-";
-            totalDisp.innerText = "-";
+    function calc() {
+        const s = new Date(document.getElementById('m_start').value), e = new Date(document.getElementById('m_end').value);
+        if(s && e && e > s) {
+            const diff = Math.ceil((e-s)/(1000*60*60*24));
+            document.getElementById('res_days').innerText = translations[currentLang].days + diff + translations[currentLang].unit;
+            document.getElementById('res_total').innerText = translations[currentLang].total + (diff * activePrice);
         }
     }
 
-    function sendWhatsApp() {
-        const s = document.getElementById('startDate').value;
-        const e = document.getElementById('endDate').value;
-        const n = document.getElementById('custNotes').value;
-        const calc = document.getElementById('totalDisplay').innerText;
-        const nights = document.getElementById('nightsDisplay').innerText;
-
-        if(!s || !e) return alert("تکایە دیرۆکێ هەلبژێرە!");
-
-        const message = `*داخوازیا نوی (VIP)*\n🏠 جهـ: ${activeTitle}\n📅 هاتن: ${s}\n📅 چوون: ${e}\n🌙 ${nights}\n📝 تێبینی: ${n}\n💰 ${calc}`;
-        window.location.href = `https://wa.me/9647515600281?text=${encodeURIComponent(message)}`;
+    function sendFarmWA() {
+        const s = document.getElementById('m_start').value, e = document.getElementById('m_end').value, n = document.getElementById('m_note').value;
+        if(!s || !e) return alert("Select dates!");
+        const msg = `*Booking Request*\n🏠 Place: ${activeName}\n📅 From: ${s}\n📅 To: ${e}\n💰 ${document.getElementById('res_total').innerText}\n📝 Note: ${n}`;
+        window.location.href = `https://wa.me/9647515600281?text=${encodeURIComponent(msg)}`;
     }
+
+    function sendSellWA() {
+        const t = document.getElementById('f_type').value, l = document.getElementById('f_loc').value, s = document.getElementById('f_size').value, p = document.getElementById('f_price').value, f = document.getElementById('f_feat').value;
+        const msg = `*Sell Property*\nType: ${t}\nLocation: ${l}\nSize: ${s}\nPrice: ${p}\nFeat: ${f}`;
+        window.location.href = `https://wa.me/9647515600281?text=${encodeURIComponent(msg)}`;
+    }
+
+    function contactWA(name) { window.location.href = `https://wa.me/9647515600281?text=Inquiry about: ${name}`; }
 </script>
 </body>
 </html>
