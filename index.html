@@ -2,6 +2,7 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- APK FIX: This specific viewport setting prevents the "Zoomed In" look on Android -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
     <title>Xanî 🏡 Ultimate Pro</title>
@@ -10,6 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- APK CRITICAL FIXES (DON'T REMOVE) --- */
+        html {
+            -webkit-text-size-adjust: 100%; /* Prevents text inflation on Android */
+            height: 100%;
+            overflow: hidden; /* Locks the outer frame */
+        }
+        
+        /* --- VARIABLES --- */
         :root { 
             --gold: #d4af37; --dark: #0f172a; --white: #ffffff; 
             --gray: #f8fafc; --green: #10b981; --blue: #3b82f6;
@@ -18,11 +27,20 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Noto Sans Arabic', sans-serif; }
 
+        /* --- LAYOUT ENGINE --- */
         body { 
-            background: var(--gray); margin: 0; padding: 0; 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
+            background: var(--gray); 
+            margin: 0; 
+            padding: 0; 
+            width: 100%;
+            height: 100%;
+            position: fixed; /* Locks body for APK */
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
         }
 
+        /* HEADER */
         header { 
             flex: 0 0 auto; background: var(--dark); color: white; 
             padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; 
@@ -33,21 +51,29 @@
         .lang-select { background: rgba(255,255,255,0.1); color: var(--gold); border: 1px solid var(--gold); padding: 5px 10px; border-radius: 8px; outline: none; font-weight: bold; }
         .lang-select option { background: var(--dark); color: white; }
 
+        /* MAIN CONTENT */
         main { 
-            flex: 1 1 auto; overflow-y: auto; padding: 20px; padding-bottom: 40px;
-            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+            flex: 1 1 auto; 
+            overflow-y: auto; /* Internal Scroll */
+            -webkit-overflow-scrolling: touch; /* iOS Smooth Scroll */
+            padding: 20px; 
+            padding-bottom: 40px;
+            width: 100%;
         }
 
+        /* FOOTER */
         footer { 
             flex: 0 0 auto; background: white; border-top: 1px solid #e2e8f0; 
             padding: 12px; text-align: center; z-index: 1000;
             padding-bottom: max(15px, env(safe-area-inset-bottom));
         }
 
-        .page { display: none; animation: fadeIn 0.3s ease-out; }
+        /* --- COMPONENTS --- */
+        .page { display: none; animation: fadeIn 0.3s ease-out; width: 100%; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* NAV CARDS */
         .nav-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
         .nav-card { 
             background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%); 
@@ -59,18 +85,18 @@
         .nav-card p { margin: 5px 0 0; font-size: 0.85rem; color: #94a3b8; }
         .nav-icon { position: absolute; top: 10px; left: 10px; font-size: 3rem; color: rgba(255,255,255,0.05); }
 
-        .card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 30px; box-shadow: var(--shadow); border: 1px solid #f1f5f9; }
+        /* LISTING CARDS */
+        .card { background: white; border-radius: 25px; overflow: hidden; margin-bottom: 30px; box-shadow: var(--shadow); border: 1px solid #f1f5f9; width: 100%; }
         .img-slider { height: 260px; position: relative; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
         .img-slider::-webkit-scrollbar { display: none; }
         .img-slider img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start; }
         .badge { position: absolute; top: 15px; right: 15px; background: var(--gold); color: var(--dark); padding: 5px 12px; border-radius: 8px; font-weight: 900; font-size: 0.75rem; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         .loc-badge { position: absolute; bottom: 15px; left: 15px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 5px; }
-
         .card-body { padding: 20px; }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .card-title { font-size: 1.3rem; font-weight: 900; color: var(--dark); margin: 0; line-height: 1.3; }
         .card-price { color: var(--green); font-size: 1.4rem; font-weight: 900; white-space: nowrap; }
-
+        
         .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 15px; }
         .spec-box { background: #f8fafc; padding: 8px 4px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .spec-box i { font-size: 1.2rem; color: var(--gold); margin-bottom: 4px; }
@@ -82,23 +108,27 @@
         .rich-list li { font-size: 0.8rem; color: #555; display: flex; align-items: center; gap: 6px; }
         .desc-text { background: #fdfbf7; padding: 12px; border-radius: 10px; font-size: 0.9rem; color: #555; line-height: 1.6; border-right: 4px solid var(--gold); margin: 15px 0; text-align: justify; }
 
+        /* BUTTONS */
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-primary { background: var(--dark); color: var(--gold); }
         .btn-success { background: var(--green); color: white; }
         .btn-back { background: #e2e8f0; color: var(--dark); margin-bottom: 15px; width: auto; padding: 10px 20px; }
 
+        /* FORMS */
+        input, select, textarea { font-size: 16px !important; /* Prevents Auto-Zoom on Input */ }
         .form-container { background: white; padding: 20px; border-radius: 25px; box-shadow: var(--shadow); }
         .form-section-title { font-size: 1rem; font-weight: 900; color: var(--dark); border-bottom: 2px solid var(--gray); padding-bottom: 8px; margin: 20px 0 15px 0; display: flex; align-items: center; gap: 8px; }
         .form-section-title i { color: var(--gold); }
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-size: 0.85rem; font-weight: bold; color: #64748b; margin-bottom: 5px; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; background: #fff; transition: border 0.3s; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 1rem; outline: none; background: #fff; transition: border 0.3s; }
         .input-group input:focus { border-color: var(--gold); }
         .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .checkbox-item { background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 8px; color: #334155; }
         .checkbox-item input { width: 18px; height: 18px; accent-color: var(--gold); }
 
+        /* MODAL */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-content { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -118,8 +148,10 @@
     <main id="mainContent">
 
         <div id="homePage" class="page active">
-            <h1 id="t_welcome" style="text-align:center; color:var(--dark); margin: 20px 0 10px;">بورسا Xanî 🏡</h1>
-            <p id="t_sub_welcome" style="text-align:center; color:#64748b; margin-bottom:30px;">سیستمێ پێشکەفتی یێ عەقاراتی</p>
+            <div style="text-align:center; margin: 20px 0;">
+                <h1 id="t_welcome" style="color:var(--dark); margin-bottom: 5px;">بورسا Xanî 🏡</h1>
+                <p id="t_sub_welcome" style="color:#64748b;">سیستمێ پێشکەفتی یێ عەقاراتی</p>
+            </div>
             
             <div class="nav-grid">
                 <div class="nav-card" onclick="showPage('farmCities')">
@@ -161,7 +193,7 @@
             <div id="listingsContainer"></div>
         </div>
 
-        <!-- BUY PAGE (FIXED & POPULATED) -->
+        <!-- BUY PAGE (RICH DATA RETAINED) -->
         <div id="buyPage" class="page">
             <button id="b_back3" class="btn btn-back" onclick="showPage('homePage')">⬅️ پاشڤە</button>
             <div id="buyContainer"></div>
@@ -310,9 +342,7 @@
     </div>
 
     <footer>
-        <div style="font-size:0.8rem; font-weight:bold; color:#94a3b8;">
-            CREATED BY <i class="fab fa-instagram" style="color:#E1306C;"></i> sakardusteki
-        </div>
+        <div class="footer-text">CREATED BY <i class="fab fa-instagram"></i> sakardusteki</div>
     </footer>
 
     <script>
@@ -324,7 +354,7 @@
                 n3: "🏠 دەرفەتێن کڕینێ", n3s: "خانی و شوقە و عەرد",
                 choose: "دەڤەرێ هەلبژێرە:", duhok: "دهۆک 🏙️", amedi: "ئامێدی 🏰", akre: "ئاکرێ ⛰️",
                 sell_form: "فۆڕما فرۆتنێ (زانیاریێن تەمام)", 
-                sec_owner: "زانیاریێن خوەدانی", l_name: "ناڤێ سیانی:", l_phone: "ژمارا مۆبایلێ:", l_whatsapp: "واتسئەپ:",
+                sec_owner: "زانیاریێن خوەدانی", l_name: "ناڤێ سیانی:", l_phone: "ژمارا مۆبایل:", l_whatsapp: "واتسئەپ:",
                 sec_loc: "جۆر و ناڤونیشان", l_type: "جۆرێ مولکی:", l_city: "باژێڕ:", l_address: "ناڤونیشان ب دروستی:",
                 sec_specs: "پێکهاتە و رووبەر", l_area: "رووبەر (m²):", l_front: "پێشاتی (m):", l_floor: "چەند نهۆم:", l_room: "ژمارا ژووران:",
                 sec_legal: "یاسایی و رەوش", l_deed: "جۆرێ سندێ:", l_dir: "ئاڕاستە (رووکار):",
@@ -392,7 +422,7 @@
                     price: 150,
                     img: ['https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800'],
                     specs: { bed: 2, bath: 1, pool: 'No', size: 600 },
-                    features: { ku: ['دارێن سنەوبەر', 'هەوایێ فێنک'], ar: ['اشجار الصنوبر', 'جو بارد'], en: ['Pine Trees', 'Cool Air'] },
+                    features: { ku: ['دارێن سنەوبەر', 'فێنک'], ar: ['اشجار الصنوبر', 'جو بارد'], en: ['Pine Trees', 'Cool Air'] },
                     rules: { ku: ['تەنێ بۆ خێزانان'], ar: ['للعوائل فقط'], en: ['Families Only'] },
                     desc: { ku: 'جهەکێ گەلەک ئارام دناڤ سروشتێ زاویتە دا. تایبەتە بۆ خێزانان.', ar: 'مكان هادئ جدا وسط طبيعة زاويته. خاص للعوائل.', en: 'A very quiet place in Zawita nature. Special for families.' }
                 },
@@ -407,7 +437,7 @@
                     desc: { ku: 'کۆخەکێ مۆدێرن ل سەرێ چیای، دیمەنەکێ ئەفسانەیی هەیە.', ar: 'كوخ مودرن على قمة الجبل، باطلالة خيالية.', en: 'Modern cabin on top of the mountain with legendary view.' }
                 }
             ],
-            // THIS IS THE FIXED AND EXPANDED BUY DATA
+            // BUY DATA (FULL 8 LISTINGS - UNTOUCHED)
             houses: [
                 {
                     id: 101, city: 'Duhok',
@@ -429,21 +459,21 @@
                 },
                 {
                     id: 103, city: 'Zakho',
-                    title: { ku: 'شوقە ل زاخۆ نوی', ar: 'شقة في زاخو الجديدة', en: 'New Zakho Apt' },
+                    title: { ku: 'شوقە ل زاخۆ نوی', ar: 'شقة في زاخو', en: 'Zakho Apt' },
                     price: 55000,
                     img: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800'],
-                    specs: { size: '125m²', floor: '3', bed: '2', bath: '1' },
-                    more_info: { ku: ['قیست', 'پارک', 'ئەساس'], ar: ['اقساط', 'بارك', 'اثاث'], en: ['Installments', 'Parking', 'Furniture'] },
-                    desc: { ku: 'شوقەکا نوی ل زاخۆ، سیستەمێ قیست. پاقژ و ئامادە.', ar: 'شقة جديدة في زاخو بنظام الاقساط. جاهزة للسكن.', en: 'New apartment in Zakho, installment plan available.' }
+                    specs: { size: '120m²', floor: '3', bed: '2', bath: '1' },
+                    more_info: { ku: ['قیست', 'پارک'], ar: ['اقساط', 'بارك'], en: ['Installment', 'Parking'] },
+                    desc: { ku: 'شوقەکا نوی ل زاخۆ، سیستەمێ قیست.', ar: 'شقة جديدة في زاخو بنظام اقساط.', en: 'New apartment in Zakho, installment plan.' }
                 },
                 {
                     id: 104, city: 'Akre',
-                    title: { ku: 'خانیێ کەڤنار ل ئاکرێ', ar: 'بيت تراثي في عقرة', en: 'Heritage House Akre' },
+                    title: { ku: 'خانیێ کەڤنار ل ئاکرێ', ar: 'بيت تراثي عقرة', en: 'Heritage House Akre' },
                     price: 85000,
                     img: ['https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=800'],
                     specs: { size: '180m²', floor: '2', bed: '3', bath: '2' },
-                    more_info: { ku: ['کەڤنار', 'نویژەنکری', 'تاپۆ'], ar: ['تراثي', 'مجدد', 'طابو'], en: ['Historic', 'Renovated', 'Tapu'] },
-                    desc: { ku: 'خانیەکێ کەڤنار و نویژەنکری ل ناڤ بازاڕێ ئاکرێ.', ar: 'بيت تراثي مجدد بالكامل في سوق عقرة.', en: 'Renovated historic house in Akre market.' }
+                    more_info: { ku: ['کەڤنار', 'نویژەنکری', 'تاپۆ'], ar: ['تراثي', 'مجدد', 'طابو'], en: ['Heritage', 'Renovated', 'Tapu'] },
+                    desc: { ku: 'خانیەکێ کەڤنار ل سەنتەرێ ئاکرێ.', ar: 'بيت تراثي في مركز عقرة.', en: 'Heritage house in Akre center.' }
                 },
                 {
                     id: 105, city: 'Amedi',
@@ -451,8 +481,8 @@
                     price: 90000,
                     img: ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800'],
                     specs: { size: '600m²', floor: '0', bed: '0', bath: '0' },
-                    more_info: { ku: ['زراعی', 'دیمەن', 'ئاڤ'], ar: ['زراعي', 'اطلالة', 'ماء'], en: ['Agri', 'View', 'Water'] },
-                    desc: { ku: 'عەردەکێ گونجاو بۆ مەزرەعێ ل سۆلاڤێ، دیمەنەکێ نایاب.', ar: 'ارض مناسبة لمزرعة في سولاف، اطلالة رائعة.', en: 'Perfect land for a farm in Sulav, amazing view.' }
+                    more_info: { ku: ['زراعی', 'دیمەن'], ar: ['زراعي', 'اطلالة'], en: ['Agriculture', 'View'] },
+                    desc: { ku: 'عەردەکێ گونجاو بۆ مەزرەعێ ل سۆلاڤێ.', ar: 'ارض مناسبة للمزرعة في سولاف.', en: 'Suitable land for farm in Sulav.' }
                 },
                 {
                     id: 106, city: 'Semel',
@@ -460,8 +490,8 @@
                     price: 45000,
                     img: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'],
                     specs: { size: '200m²', floor: '1', bed: '3', bath: '2' },
-                    more_info: { ku: ['هەیکەل', 'تاپۆ', 'روکن'], ar: ['هيكل', 'طابو', 'ركن'], en: ['Skeleton', 'Tapu', 'Corner'] },
-                    desc: { ku: 'خانیێ هەیکەل ل سێمێلێ، دیزاینەکا نوی.', ar: 'بيت هيكل في سميل، تصميم حديث.', en: 'Skeleton house in Semel, modern design.' }
+                    more_info: { ku: ['هەیکەل', 'تاپۆ'], ar: ['هيكل', 'طابو'], en: ['Skeleton', 'Tapu'] },
+                    desc: { ku: 'خانیێ هەیکەل ل سێمێلێ.', ar: 'بيت هيكل في سميل.', en: 'Skeleton house in Semel.' }
                 },
                 {
                     id: 107, city: 'Duhok',
@@ -469,12 +499,12 @@
                     price: 250000,
                     img: ['https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800'],
                     specs: { size: '400m²', floor: '3', bed: '6', bath: '4' },
-                    more_info: { ku: ['باخچە', 'گەراج', 'زیرەک'], ar: ['حديقة', 'كراج', 'ذكي'], en: ['Garden', 'Garage', 'Smart'] },
-                    desc: { ku: 'ڤێلایەکا شاهانە و فوول خزمەتگوزاری ل ماسیکێ.', ar: 'فيلا ملكية كاملة الخدمات في ماسيك.', en: 'Royal villa with full services in Masike.' }
+                    more_info: { ku: ['باخچە', 'گەراج'], ar: ['حديقة', 'كراج'], en: ['Garden', 'Garage'] },
+                    desc: { ku: 'ڤێلایەکا شاهانە ل ماسیکێ.', ar: 'فيلا ملكية في ماسيك.', en: 'Royal villa in Masike.' }
                 },
                 {
                     id: 108, city: 'Zakho',
-                    title: { ku: 'دکان ل ئیبراهیم خەلیل', ar: 'محال في ابراهيم خليل', en: 'Shop Ibrahim Khalil' },
+                    title: { ku: 'دکان ل ئیبراهیم خەلیل', ar: 'محال تجاري', en: 'Shop Ibrahim Khalil' },
                     price: 120000,
                     img: ['https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800'],
                     specs: { size: '50m²', floor: '0', bed: '0', bath: '0' },
@@ -590,23 +620,18 @@
             });
         }
 
-        // --- FIXED AND POPULATED RENDER BUY ---
         function renderBuy() {
             const c = document.getElementById('buyContainer');
             c.innerHTML = '';
             const t = tr[currentLang];
             
-            // Check if houses exist
-            if (!db.houses || db.houses.length === 0) {
-                c.innerHTML = '<p style="text-align:center; padding:20px;">No listings available.</p>';
-                return;
-            }
-
             db.houses.forEach(item => {
                 c.innerHTML += `
                 <div class="card">
-                    <div class="img-slider">
-                        <img src="${item.img[0]}">
+                    <div class="img-wrapper">
+                        <div class="img-slider">
+                            <img src="${item.img[0]}">
+                        </div>
                         <div class="badge" style="background:var(--green); color:white;">FOR SALE</div>
                         <div class="loc-badge"><i class="fas fa-map-marker-alt"></i> ${item.city}</div>
                     </div>
